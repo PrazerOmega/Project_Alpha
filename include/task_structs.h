@@ -16,7 +16,6 @@ typedef struct
     Task *pTask;
     unsigned int count;
     int capacity;
-
 }TaskList;
 
 
