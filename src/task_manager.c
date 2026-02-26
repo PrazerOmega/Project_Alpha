@@ -6,8 +6,8 @@
 #include "task_manager.h"
 #include "memory_utils.h"
 
-#define OK 0;
-#define MEMORY_NULL 
+/*#define OK 0;
+#define MEMORY_NULL (-1)*/
 
 void add_task(TaskList *list, Task newTask){
 if (list == NULL)
@@ -22,7 +22,7 @@ int taskID = list->count;
 if (list->count == list->capacity)
 {
     printf("Espaco para tarefas cheio, aumentando espaco...\n");
-    safe_reallloc(list->pTask,10);
+    list->pTask = safe_reallloc(list->pTask,10*sizeof(Task));
     printf("Espaco novo realocado\n");
     list->capacity += 10;
 }
@@ -32,11 +32,14 @@ printf("Adicionando nova tarefa a lista\n");
 
     list->pTask[taskID].id = taskID+1;
 
-    list->pTask[taskID].title = malloc(100);
-    list->pTask[taskID].description = malloc(100);
+    list->pTask[taskID].title = malloc(strlen(newTask.title) + 1);
+    list->pTask[taskID].description = malloc(strlen(newTask.description) + 1);
 
     if(list->pTask[taskID].description == NULL || list->pTask[taskID].title == NULL){
         perror("Erro ao alocar memoria");
+        if(list->pTask[taskID].description == NULL){
+            free(list->pTask[taskID].title);
+        }
         return;
     }
 
@@ -53,6 +56,7 @@ printf("Adicionando nova tarefa a lista\n");
 void remove_task(TaskList *list, int id){
     if(list == NULL){
         perror("Lista nao encontrada");
+        return;
     }
 
     int choice = 0;
